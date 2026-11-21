@@ -69,8 +69,11 @@ SELECTED = VARIANTS[0]
 def main() -> None:
     joke = SELECTED
     # Gate: UTF-8, 1-280 Unicode code points, not only whitespace.
-    assert 1 <= len(joke) <= 280, f"joke is {len(joke)} chars"
-    assert joke.strip(), "joke is only whitespace"
+    # Explicit checks (not assert) so the gate still holds under python -O.
+    if not 1 <= len(joke) <= 280:
+        raise ValueError(f"joke is {len(joke)} chars, must be 1-280")
+    if not joke.strip():
+        raise ValueError("joke is only whitespace")
     out_dir = os.environ.get("OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
